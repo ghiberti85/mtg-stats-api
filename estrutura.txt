@@ -1,0 +1,66 @@
+.
+├── README.md
+├── eslint.config.mjs
+├── estrutura.txt
+├── mtg-stats-api.zip
+├── nest-cli.json
+├── package-lock.json
+├── package.json
+├── src
+│   ├── app.controller.spec.ts
+│   ├── app.controller.ts
+│   ├── app.module.ts
+│   ├── app.service.ts
+│   ├── auth
+│   │   ├── auth.controller.spec.ts
+│   │   ├── auth.controller.ts
+│   │   ├── auth.module.ts
+│   │   ├── dto
+│   │   │   ├── signin.dto.ts
+│   │   │   └── signup.dto.ts
+│   │   ├── supabase-auth.client.ts
+│   │   ├── supabase-auth.guard.spec.ts
+│   │   └── supabase-auth.guard.ts
+│   ├── database
+│   │   ├── database.controller.spec.ts
+│   │   ├── database.controller.ts
+│   │   └── database.module.ts
+│   ├── decks
+│   │   ├── decks.controller.ts
+│   │   ├── decks.module.ts
+│   │   ├── decks.service.ts
+│   │   └── dto
+│   │       ├── create-deck.dto.ts
+│   │       └── update-deck.dto.ts
+│   ├── enums
+│   │   └── match-result.enum.ts
+│   ├── external
+│   │   └── scryfall.service.ts
+│   ├── main.ts
+│   ├── matches
+│   │   ├── dto
+│   │   │   ├── create-match.dto.ts
+│   │   │   └── update-match.dto.ts
+│   │   ├── interface
+│   │   │   └── match.interface.ts
+│   │   ├── matches.controller.ts
+│   │   ├── matches.module.ts
+│   │   ├── matches.service.spec.ts
+│   │   └── matches.service.ts
+│   ├── players
+│   │   ├── dto
+│   │   │   ├── create-player.dto.ts
+│   │   │   └── update-player.dto.ts
+│   │   ├── players.controller.ts
+│   │   ├── players.module.ts
+│   │   └── players.service.ts
+│   └── supabaseClient.ts
+├── test
+│   ├── app.e2e-spec.ts
+│   ├── auth.e2e-spec.ts
+│   ├── jest-e2e.json
+│   └── matches.e2e-spec.ts
+├── tsconfig.build.json
+└── tsconfig.json
+
+15 directories, 49 files
