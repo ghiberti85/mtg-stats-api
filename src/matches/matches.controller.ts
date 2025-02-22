@@ -22,7 +22,7 @@ import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { Public } from '../auth/public.decorator';
 
-@ApiTags('matches') // Agrupa os endpoints no Swagger
+@ApiTags('Matches') // Agrupa os endpoints no Swagger
 @ApiExtraModels(CreateMatchDto, UpdateMatchDto)
 @Controller('matches')
 export class MatchesController {

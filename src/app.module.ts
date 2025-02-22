@@ -7,6 +7,7 @@ import { DatabaseModule } from './database/database.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
     MatchesModule,
     PlayersModule,
     DecksModule,
+    StatsModule,
     DatabaseModule,
   ],
   controllers: [AppController],

@@ -23,13 +23,13 @@ export class CreateMatchDto {
   @IsString()
   format: string;
 
+  @IsEnum(MatchResult, { message: 'O resultado deve ser win, loss ou draw' })
   @ApiProperty({
     example: 'win',
     enum: MatchResult,
-    description: 'Resultado da partida (win ou loss)',
+    description: 'Resultado da partida (win, loss ou draw)',
   })
-  @IsEnum(MatchResult)
-  result: MatchResult;
+  result: MatchResult | keyof typeof MatchResult; // 🔹 Permite string ou enum
 
   @ApiProperty({
     example: 30,

@@ -18,7 +18,7 @@ import { supabase } from '../supabaseClient';
 import { SignInDto } from './dto/signin.dto';
 import { SignUpDto } from './dto/signup.dto';
 
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   @Post('signup')
@@ -47,8 +47,10 @@ export class AuthController {
   @ApiBody({ type: SignInDto })
   async signIn(@Body() body: { email: string; password: string }) {
     const { data, error } = await supabase.auth.signInWithPassword(body);
-    if (error) {
+    if (error && typeof error === 'object' && 'message' in error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    } else if (error) {
+      throw new HttpException('Unknown error occurred', HttpStatus.BAD_REQUEST);
     }
     if (!data?.user) {
       throw new HttpException(
@@ -67,8 +69,10 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Error signing out user' })
   async signOut(): Promise<{ message: string }> {
     const { error } = await supabase.auth.signOut();
-    if (error) {
+    if (error && typeof error === 'object' && 'message' in error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    } else if (error) {
+      throw new HttpException('Unknown error occurred', HttpStatus.BAD_REQUEST);
     }
     return { message: 'Successfully signed out' };
   }
