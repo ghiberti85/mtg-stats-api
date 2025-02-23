@@ -113,7 +113,7 @@ export class MatchesService {
       await supabase
         .from('matches')
         .select('*')
-        .or(`player_id.eq.${playerId},opponent_id.eq.${playerId}`);
+        .or(`player_id.eq.${playerId},opponent_deck_id.eq.${playerId}`);
 
     if (error) {
       throw new InternalServerErrorException(
@@ -133,7 +133,7 @@ export class MatchesService {
       await supabase
         .from('matches')
         .select('*')
-        .or(`deck_used.eq.${deckId},opponent_deck.eq.${deckId}`);
+        .or(`deck_id.eq.${deckId},opponent_deck_id.eq.${deckId}`);
 
     if (error) {
       throw new InternalServerErrorException(
@@ -157,7 +157,7 @@ export class MatchesService {
         .from('matches')
         .select('*')
         .or(
-          `player_id.eq.${player1},opponent_id.eq.${player2},player_id.eq.${player2},opponent_id.eq.${player1}`,
+          `player_id.eq.${player1},opponent_deck_id.eq.${player2},player_id.eq.${player2},opponent_deck_id.eq.${player1}`,
         );
 
     if (error) {

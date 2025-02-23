@@ -1,0 +1,62 @@
+
+> mtg-stats-api@0.0.1 test:cov
+> jest --coverage
+
+--------------------------|---------|----------|---------|---------|-----------------------
+File                      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s     
+--------------------------|---------|----------|---------|---------|-----------------------
+All files                 |   23.31 |    14.16 |   18.66 |   21.96 |                       
+ src                      |   47.72 |       40 |      60 |   44.73 |                       
+  app.controller.ts       |     100 |      100 |     100 |     100 |                       
+  app.module.ts           |       0 |      100 |     100 |       0 | 2-24                  
+  app.service.ts          |     100 |      100 |     100 |     100 |                       
+  main.ts                 |       0 |        0 |       0 |       0 | 1-24                  
+  supabaseClient.ts       |    87.5 |    66.66 |     100 |    87.5 | 12                    
+ src/auth                 |   56.57 |       50 |   42.85 |   57.35 |                       
+  auth.controller.ts      |   58.53 |    33.33 |      50 |   56.41 | 34,53,56,71-77,94-118 
+  auth.module.ts          |       0 |      100 |     100 |       0 | 2-11                  
+  public.decorator.ts     |       0 |      100 |       0 |       0 | 1-6                   
+  supabase-auth.client.ts |       0 |      100 |       0 |       0 | 1-20                  
+  supabase-auth.guard.ts  |      95 |     87.5 |     100 |   94.44 | 42                    
+ src/auth/dto             |     100 |      100 |     100 |     100 |                       
+  signin.dto.ts           |     100 |      100 |     100 |     100 |                       
+  signup.dto.ts           |     100 |      100 |     100 |     100 |                       
+ src/database             |   43.75 |        0 |       0 |   41.66 |                       
+  database.controller.ts  |   63.63 |        0 |       0 |   55.55 | 18-26                 
+  database.module.ts      |       0 |      100 |     100 |       0 | 1-7                   
+ src/decks                |       0 |        0 |       0 |       0 |                       
+  decks.controller.ts     |       0 |      100 |       0 |       0 | 2-77                  
+  decks.module.ts         |       0 |      100 |     100 |       0 | 2-10                  
+  decks.service.ts        |       0 |        0 |       0 |       0 | 2-96                  
+ src/decks/dto            |       0 |      100 |     100 |       0 |                       
+  create-deck.dto.ts      |       0 |      100 |     100 |       0 | 1-32                  
+  update-deck.dto.ts      |       0 |      100 |     100 |       0 | 2-31                  
+ src/enums                |     100 |      100 |     100 |     100 |                       
+  match-result.enum.ts    |     100 |      100 |     100 |     100 |                       
+ src/external             |       0 |      100 |       0 |       0 |                       
+  scryfall.service.ts     |       0 |      100 |       0 |       0 | 2-12                  
+ src/matches              |    6.84 |        0 |       0 |    4.47 |                       
+  matches.controller.ts   |       0 |      100 |       0 |       0 | 1-106                 
+  matches.module.ts       |       0 |      100 |     100 |       0 | 2-10                  
+  matches.service.ts      |   10.86 |        0 |       0 |    6.81 | 18-188                
+ src/matches/dto          |       0 |      100 |     100 |       0 |                       
+  create-match.dto.ts     |       0 |      100 |     100 |       0 | 1-50                  
+  update-match.dto.ts     |       0 |      100 |     100 |       0 | 1-58                  
+ src/players              |    5.68 |        0 |       0 |    3.89 |                       
+  players.controller.ts   |       0 |      100 |       0 |       0 | 2-89                  
+  players.module.ts       |       0 |      100 |     100 |       0 | 1-10                  
+  players.service.ts      |    8.47 |        0 |       0 |    5.76 | 29-164                
+ src/players/dto          |       0 |      100 |     100 |       0 |                       
+  create-player.dto.ts    |       0 |      100 |     100 |       0 | 2-25                  
+  update-player.dto.ts    |       0 |      100 |     100 |       0 | 1-21                  
+ src/stats                |   36.61 |        0 |   43.75 |   35.48 |                       
+  stats.controller.ts     |     100 |      100 |     100 |     100 |                       
+  stats.module.ts         |       0 |      100 |     100 |       0 | 1-13                  
+  stats.service.ts        |      20 |        0 |      10 |    17.5 | 15-82                 
+ src/stats/dto            |       0 |      100 |     100 |       0 |                       
+  compare-decks.dto.ts    |       0 |      100 |     100 |       0 | 1-9                   
+  deck-stats.dto.ts       |       0 |      100 |     100 |       0 | 1-14                  
+  leaderboard.dto.ts      |       0 |      100 |     100 |       0 | 1-8                   
+  matchup.dto.ts          |       0 |      100 |     100 |       0 | 1-11                  
+  player-stats.dto.ts     |       0 |      100 |     100 |       0 | 1-14                  
+--------------------------|---------|----------|---------|---------|-----------------------
