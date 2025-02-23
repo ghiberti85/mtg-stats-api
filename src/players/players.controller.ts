@@ -54,6 +54,18 @@ export class PlayersController {
     return await this.playersService.getPlayerById(id);
   }
 
+  @Public()
+  @Get('stats/:id')
+  @ApiOperation({ summary: 'Get player statistics' })
+  @ApiResponse({
+    status: 200,
+    description: 'Player statistics returned successfully',
+  })
+  @ApiResponse({ status: 404, description: 'Player not found' })
+  async getPlayerStats(@Param('id') id: string) {
+    return await this.playersService.getPlayerStats(id);
+  }
+
   @ApiBearerAuth() // Requires Bearer authentication
   @UseGuards(SupabaseAuthGuard)
   @Patch(':id')
