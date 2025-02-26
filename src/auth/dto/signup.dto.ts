@@ -8,12 +8,12 @@ export class SignUpDto {
     description: 'Email do usuário',
   })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     example: 'StrongP@ssw0rd',
     description: 'Senha do usuário (mínimo 6 caracteres)',
   })
   @MinLength(6)
-  password: string;
+  password!: string;
 }

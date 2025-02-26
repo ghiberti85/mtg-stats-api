@@ -5,14 +5,14 @@ import { IsString, IsEmail, IsOptional, IsInt, Min } from 'class-validator';
 export class CreatePlayerDto {
   @ApiProperty({ example: 'João Silva', description: 'Nome do jogador' })
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({
     example: 'player@example.com',
     description: 'Email do jogador',
   })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     example: 10,

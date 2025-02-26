@@ -1,4 +1,3 @@
-// src/decks/decks.service.ts
 import {
   Injectable,
   NotFoundException,
@@ -8,91 +7,87 @@ import { supabase } from '../supabaseClient';
 import { CreateDeckDto } from './dto/create-deck.dto';
 import { UpdateDeckDto } from './dto/update-deck.dto';
 
+interface Deck {
+  id: string;
+  name: string;
+  player_id: string;
+  archetype: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 @Injectable()
 export class DecksService {
-  async createDeck(createDeckDto: CreateDeckDto): Promise<CreateDeckDto> {
-    const {
-      data,
-      error,
-    }: { data: CreateDeckDto[] | null; error: { message: string } | null } =
-      await supabase.from('decks').insert([createDeckDto]).select();
+  async createDeck(createDeckDto: CreateDeckDto): Promise<Deck> {
+    const response = await supabase
+      .from('decks')
+      .insert([createDeckDto])
+      .select('*');
 
-    if (error) {
-      throw new InternalServerErrorException(error.message);
-    }
-    if (!data || data.length === 0) {
-      throw new InternalServerErrorException('No data returned from Supabase.');
-    }
-    return data[0];
-  }
-
-  async getDeckById(deckId: string) {
-    const {
-      data,
-      error,
-    }: { data: Record<string, any> | null; error: { message: string } | null } =
-      await supabase.from('decks').select('*').eq('id', deckId).single();
-
-    if (error || !data) {
-      throw new NotFoundException(`Deck with id ${deckId} not found.`);
-    }
-    return data;
-  }
-
-  async getDecks(playerId?: string): Promise<Record<string, any>[]> {
-    let query = supabase.from('decks').select('*');
-    if (playerId) {
-      query = query.eq('player_id', playerId);
-    }
-    const {
-      data,
-      error,
-    }: { data: any[] | null; error: { message: string } | null } = await query;
-    if (error) {
-      throw new InternalServerErrorException(error.message);
-    }
-    return (data as Record<string, any>[]) ?? [];
-  }
-
-  async updateDeck(deckId: string, updateDeckDto: UpdateDeckDto) {
-    const {
-      data,
-      error,
-    }: { data: any[] | null; error: { message: string } | null } =
-      await supabase
-        .from('decks')
-        .update(updateDeckDto)
-        .eq('id', deckId)
-        .select();
-    if (error) {
-      throw new NotFoundException(
-        `Deck with id ${deckId} not found or update failed: ${error.message}`,
+    if (response.error || !response.data || response.data.length === 0) {
+      throw new InternalServerErrorException(
+        `Error creating deck: ${response.error?.message || 'Unknown error'}`,
       );
     }
-    if (!data || data.length === 0) {
+
+    return response.data[0] as Deck;
+  }
+
+  async getDeckById(deckId: string): Promise<Deck> {
+    const response = await supabase
+      .from('decks')
+      .select('*')
+      .eq('id', deckId)
+      .single();
+
+    if (response.error || !response.data) {
+      throw new NotFoundException(`Deck with id ${deckId} not found.`);
+    }
+
+    return response.data as Deck;
+  }
+
+  async getDecks(): Promise<Deck[]> {
+    const response = await supabase.from('decks').select('*');
+
+    if (response.error || !response.data) {
+      throw new InternalServerErrorException('Error retrieving decks.');
+    }
+
+    return response.data as Deck[];
+  }
+
+  async updateDeck(
+    deckId: string,
+    updateDeckDto: UpdateDeckDto,
+  ): Promise<Deck> {
+    const response = await supabase
+      .from('decks')
+      .update(updateDeckDto)
+      .eq('id', deckId)
+      .select('*')
+      .single();
+
+    if (response.error || !response.data) {
       throw new NotFoundException(
         `Deck with id ${deckId} not found or update failed.`,
       );
     }
-    return data[0] as UpdateDeckDto;
+
+    return response.data as Deck;
   }
 
-  async deleteDeck(deckId: string) {
-    const {
-      data,
-      error,
-    }: { data: any[] | null; error: { message: string } | null } =
-      await supabase.from('decks').delete().eq('id', deckId).select();
-    if (error) {
+  async deleteDeck(deckId: string): Promise<void> {
+    const response = await supabase
+      .from('decks')
+      .delete()
+      .eq('id', deckId)
+      .select('*');
+
+    if (response.error) {
       throw new NotFoundException(
-        `Deck with id ${deckId} not found or deletion failed: ${error.message}`,
+        `Deck with id ${deckId} not found or deletion failed: ${response.error.message}`,
       );
     }
-    if (!data || data.length === 0) {
-      throw new NotFoundException(
-        `Deck with id ${deckId} not found or deletion failed.`,
-      );
-    }
-    return { message: 'Deck deleted successfully' };
   }
 }

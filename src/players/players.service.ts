@@ -31,9 +31,11 @@ export class PlayersService {
     if (error) {
       throw new InternalServerErrorException(error.message);
     }
-    if (!data || data.length === 0) {
+
+    if (!data || !Array.isArray(data) || data.length === 0) {
       throw new InternalServerErrorException('No data returned from Supabase.');
     }
+
     return data[0];
   }
 
@@ -42,7 +44,7 @@ export class PlayersService {
       data,
       error,
     }: { data: CreatePlayerDto | null; error: { message: string } | null } =
-      await supabase.from('players').select('*').eq('id', playerId).single();
+      await supabase.from('players').select().eq('id', playerId).maybeSingle();
 
     if (error || !data) {
       throw new NotFoundException(`Player with id ${playerId} not found.`);
@@ -129,14 +131,14 @@ export class PlayersService {
         .from('players')
         .update(updatePlayerDto)
         .eq('id', playerId)
-        .select();
+        .maybeSingle();
 
     if (error) {
       throw new NotFoundException(
         `Player with id ${playerId} not found or update failed: ${error.message}`,
       );
     }
-    if (!data || data.length === 0) {
+    if (!data || !Array.isArray(data) || data.length === 0) {
       throw new NotFoundException(
         `Player with id ${playerId} not found or update failed.`,
       );
@@ -148,15 +150,22 @@ export class PlayersService {
     const {
       data,
       error,
-    }: { data: any[] | null; error: { message: string } | null } =
-      await supabase.from('players').delete().eq('id', playerId).select();
+    }: { data: { id: string }[] | null; error: { message: string } | null } =
+      (await supabase
+        .from('players')
+        .delete()
+        .eq('id', playerId)
+        .maybeSingle()) as {
+        data: { id: string }[] | null;
+        error: { message: string } | null;
+      };
 
     if (error) {
       throw new NotFoundException(
         `Player with id ${playerId} not found or deletion failed: ${error.message}`,
       );
     }
-    if (!data || data.length === 0) {
+    if (!data || !Array.isArray(data) || data.length === 0) {
       throw new NotFoundException(
         `Player with id ${playerId} not found or deletion failed.`,
       );

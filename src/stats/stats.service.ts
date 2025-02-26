@@ -44,39 +44,39 @@ export class StatsService {
   }
 
   async getLeaderboard() {
-    let players: { id: string; name: string }[] = [];
+    let players: { name: string }[] = [];
+
     try {
       const playerDtos = await this.playersService.getPlayers();
       if (!Array.isArray(playerDtos)) {
         console.error('Failed to fetch players');
         return [];
       }
-      players = playerDtos.map((player: CreatePlayerDto) => {
-        if (
-          player &&
-          'id' in player &&
-          'name' in player &&
-          typeof player.id === 'string' &&
-          typeof player.name === 'string'
-        ) {
-          return {
-            id: player.id,
-            name: player.name,
-          };
-        } else {
-          console.error('Invalid player data', player);
-          return { id: '', name: '' };
-        }
-      });
+
+      players = playerDtos
+        .filter(
+          (player: CreatePlayerDto) =>
+            player && typeof player.name === 'string',
+        )
+        .map((player: CreatePlayerDto) => ({ name: player.name }));
+
+      if (players.length === 0) {
+        console.error('No valid players found');
+        return [];
+      }
     } catch (error) {
       console.error('Failed to fetch players', error);
       return [];
     }
+
     const leaderboard: { player: string; winRate: number }[] = [];
 
     for (const player of players) {
-      const stats = await this.getPlayerStats(player.id);
-      leaderboard.push({ player: player.name, winRate: stats.winRate });
+      const stats = await this.getPlayerStats(player.name);
+      leaderboard.push({
+        player: player.name,
+        winRate: Math.round(stats.winRate * 100) / 100, // 🔹 Arredonda para duas casas decimais
+      });
     }
 
     return leaderboard.sort((a, b) => b.winRate - a.winRate);
