@@ -7,15 +7,15 @@ export class CreateDeckDto {
     description: 'ID do Deck',
   })
   @IsUUID()
-  id: string;
+  id!: string;
 
   @ApiProperty({ example: 'Test Deck', description: 'Nome do Deck' })
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 'modern', description: 'Arquétipo do deck' })
   @IsString()
-  archetype: string;
+  archetype!: string;
 
   @ApiProperty({
     example: '2025-02-19T20:17:27.158Z',

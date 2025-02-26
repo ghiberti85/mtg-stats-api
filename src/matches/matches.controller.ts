@@ -8,6 +8,7 @@ import {
   Patch,
   Delete,
   UseGuards,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
 import {
@@ -21,14 +22,15 @@ import { MatchesService } from './matches.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { Public } from '../auth/public.decorator';
+import { MatchResult } from '../enums/match-result.enum';
 
-@ApiTags('Matches') // Agrupa os endpoints no Swagger
+@ApiTags('Matches')
 @ApiExtraModels(CreateMatchDto, UpdateMatchDto)
 @Controller('matches')
 export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
-  @ApiBearerAuth() // Adiciona autenticação Bearer para toda a rota
+  @ApiBearerAuth()
   @UseGuards(SupabaseAuthGuard)
   @Post()
   @ApiOperation({ summary: 'Create a new game' })
@@ -42,11 +44,26 @@ export class MatchesController {
   async createMatch(
     @Body() createMatchDto: CreateMatchDto,
   ): Promise<CreateMatchDto> {
-    return await this.matchesService.createMatch(createMatchDto);
+    // Normaliza o campo result para minúsculas
+    const normalized = createMatchDto.result.toLowerCase();
+    if (normalized === 'win') {
+      createMatchDto.result = MatchResult.WIN;
+    } else if (normalized === 'loss') {
+      createMatchDto.result = MatchResult.LOSS;
+    } else if (normalized === 'draw') {
+      createMatchDto.result = MatchResult.DRAW;
+    } else {
+      throw new InternalServerErrorException('Invalid match result');
+    }
+    // Chama o serviço para criar a partida
+    const createdMatch = await this.matchesService.createMatch(createMatchDto);
+    return {
+      ...createdMatch,
+      result: createdMatch.result as unknown as MatchResult,
+    };
   }
 
-  // ✅ Endpoint para listar todas as partidas ou filtrar por playerId
-  @Public() // Define o endpoint como público
+  @Public()
   @Get()
   @ApiOperation({ summary: 'List all registered matches' })
   @ApiResponse({
@@ -61,8 +78,7 @@ export class MatchesController {
     return await this.matchesService.getMatches(playerId);
   }
 
-  // ✅ Endpoint para obter uma partida específica pelo ID
-  @Public() // Define o endpoint como público
+  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get a match by ID' })
   @ApiResponse({
@@ -70,13 +86,12 @@ export class MatchesController {
     description: 'Match found',
     type: CreateMatchDto,
   })
-  @ApiResponse({ status: 404, description: 'Remove the match' })
+  @ApiResponse({ status: 404, description: 'Match not found' })
   async getMatchById(@Param('id') id: string): Promise<CreateMatchDto> {
     return await this.matchesService.getMatchById(id);
   }
 
-  // ✅ Endpoint para atualizar uma partida pelo ID
-  @ApiBearerAuth() // Adiciona autenticação Bearer para toda a rota
+  @ApiBearerAuth()
   @UseGuards(SupabaseAuthGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Update an existing match' })
@@ -85,7 +100,7 @@ export class MatchesController {
     description: 'Match updated successfully',
     type: UpdateMatchDto,
   })
-  @ApiResponse({ status: 404, description: 'Remove the match' })
+  @ApiResponse({ status: 404, description: 'Match not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async updateMatch(
     @Param('id') id: string,
@@ -94,14 +109,13 @@ export class MatchesController {
     return await this.matchesService.updateMatch(id, updateMatchDto);
   }
 
-  // ✅ Endpoint para excluir uma partida pelo ID
-  @ApiBearerAuth() // Adiciona autenticação Bearer para toda a rota
+  @ApiBearerAuth()
   @UseGuards(SupabaseAuthGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Remove the match' })
   @ApiResponse({ status: 200, description: 'Match removed successfully' })
   @ApiResponse({ status: 404, description: 'Match not found' })
-  @ApiResponse({ status: 401, description: 'Match not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async deleteMatch(@Param('id') id: string): Promise<{ message: string }> {
     return await this.matchesService.deleteMatch(id);
   }

@@ -1,3 +1,4 @@
+// src/matches/dto/create-match.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
@@ -47,7 +48,7 @@ export class CreateMatchDto {
     enum: MatchResult,
     description: 'Resultado da partida (win, loss ou draw)',
   })
-  result!: MatchResult | keyof typeof MatchResult;
+  result!: MatchResult;
 
   @ApiProperty({
     example: 30,
