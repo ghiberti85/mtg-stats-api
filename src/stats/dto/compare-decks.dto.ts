@@ -3,8 +3,8 @@ import { DeckStatsDto } from './deck-stats.dto';
 
 export class CompareDecksDto {
   @ApiProperty({ type: DeckStatsDto })
-  deck1: DeckStatsDto;
+  deck1!: DeckStatsDto;
 
   @ApiProperty({ type: DeckStatsDto })
-  deck2: DeckStatsDto;
+  deck2!: DeckStatsDto;
 }

@@ -20,7 +20,11 @@ describe('DecksService', () => {
   });
 
   it('should create a deck successfully', async () => {
-    const createDeckDto = { id: '123', name: 'Deck1', archetype: 'modern' };
+    const createDeckDto = {
+      player_id: '550e8400-e29b-41d4-a716-446655440000',
+      name: 'Deck One',
+      archetype: 'Aggro',
+    };
     (supabase.from as jest.Mock).mockReturnValueOnce({
       insert: jest.fn().mockReturnValueOnce({
         select: jest
@@ -34,7 +38,11 @@ describe('DecksService', () => {
   });
 
   it('should throw an error when creation fails', async () => {
-    const createDeckDto = { id: '123', name: 'Deck1', archetype: 'modern' };
+    const createDeckDto = {
+      player_id: '550e8400-e29b-41d4-a716-446655440000',
+      name: 'Deck One',
+      archetype: 'Aggro',
+    };
     (supabase.from as jest.Mock).mockReturnValueOnce({
       insert: jest.fn().mockReturnValueOnce({
         select: jest.fn().mockResolvedValueOnce({

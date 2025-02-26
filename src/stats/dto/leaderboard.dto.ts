@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LeaderboardDto {
-  @ApiProperty({ example: 'Jogador1' })
-  player: string;
+  @ApiProperty({ example: 'player-uuid', description: 'ID do jogador' })
+  player!: string;
 
-  @ApiProperty({ example: 75 })
-  winRate: number;
+  @ApiProperty({ example: 65, description: 'Taxa de vitória em porcentagem' })
+  winRate!: number;
 }
