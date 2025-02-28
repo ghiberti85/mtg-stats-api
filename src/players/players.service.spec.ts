@@ -40,7 +40,7 @@ describe('PlayersService', () => {
     name: 'Updated Player',
   };
 
-  // Objeto retornado pelo DB após o update (pode conter outros campos, como email e level)
+  // Objeto retornado pelo DB após o update
   const mockUpdatedPlayerFromDB = {
     id: 'player-123',
     name: 'Updated Player',
@@ -285,9 +285,11 @@ describe('PlayersService', () => {
       (supabase.from as jest.Mock).mockReturnValueOnce({
         update: jest.fn().mockReturnValueOnce({
           eq: jest.fn().mockReturnValueOnce({
-            maybeSingle: jest.fn().mockResolvedValueOnce({
-              data: [mockUpdatedPlayerFromDB],
-              error: null,
+            select: jest.fn().mockReturnValueOnce({
+              maybeSingle: jest.fn().mockResolvedValueOnce({
+                data: mockUpdatedPlayerFromDB,
+                error: null,
+              }),
             }),
           }),
         }),
@@ -302,9 +304,11 @@ describe('PlayersService', () => {
       (supabase.from as jest.Mock).mockReturnValueOnce({
         update: jest.fn().mockReturnValueOnce({
           eq: jest.fn().mockReturnValueOnce({
-            maybeSingle: jest.fn().mockResolvedValueOnce({
-              data: [],
-              error: null,
+            select: jest.fn().mockReturnValueOnce({
+              maybeSingle: jest.fn().mockResolvedValueOnce({
+                data: null,
+                error: null,
+              }),
             }),
           }),
         }),
@@ -319,9 +323,11 @@ describe('PlayersService', () => {
       (supabase.from as jest.Mock).mockReturnValueOnce({
         update: jest.fn().mockReturnValueOnce({
           eq: jest.fn().mockReturnValueOnce({
-            maybeSingle: jest.fn().mockResolvedValueOnce({
-              data: null,
-              error: { message: 'Erro ao atualizar jogador' },
+            select: jest.fn().mockReturnValueOnce({
+              maybeSingle: jest.fn().mockResolvedValueOnce({
+                data: null,
+                error: { message: 'Erro ao atualizar jogador' },
+              }),
             }),
           }),
         }),
@@ -338,9 +344,11 @@ describe('PlayersService', () => {
       (supabase.from as jest.Mock).mockReturnValueOnce({
         delete: jest.fn().mockReturnValueOnce({
           eq: jest.fn().mockReturnValueOnce({
-            maybeSingle: jest.fn().mockResolvedValueOnce({
-              data: [{ id: 'player-123' }],
-              error: null,
+            select: jest.fn().mockReturnValueOnce({
+              maybeSingle: jest.fn().mockResolvedValueOnce({
+                data: { id: 'player-123' },
+                error: null,
+              }),
             }),
           }),
         }),
@@ -355,9 +363,11 @@ describe('PlayersService', () => {
       (supabase.from as jest.Mock).mockReturnValueOnce({
         delete: jest.fn().mockReturnValueOnce({
           eq: jest.fn().mockReturnValueOnce({
-            maybeSingle: jest.fn().mockResolvedValueOnce({
-              data: [],
-              error: null,
+            select: jest.fn().mockReturnValueOnce({
+              maybeSingle: jest.fn().mockResolvedValueOnce({
+                data: null,
+                error: null,
+              }),
             }),
           }),
         }),
@@ -372,9 +382,11 @@ describe('PlayersService', () => {
       (supabase.from as jest.Mock).mockReturnValueOnce({
         delete: jest.fn().mockReturnValueOnce({
           eq: jest.fn().mockReturnValueOnce({
-            maybeSingle: jest.fn().mockResolvedValueOnce({
-              data: null,
-              error: { message: 'Erro ao deletar jogador' },
+            select: jest.fn().mockReturnValueOnce({
+              maybeSingle: jest.fn().mockResolvedValueOnce({
+                data: null,
+                error: { message: 'Erro ao deletar jogador' },
+              }),
             }),
           }),
         }),

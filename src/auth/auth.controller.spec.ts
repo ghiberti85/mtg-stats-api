@@ -2,6 +2,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { HttpException } from '@nestjs/common';
+import { createResponse } from 'node-mocks-http';
+import { Response } from 'express';
 
 jest.mock('../supabaseClient', () => ({
   supabase: {
@@ -15,6 +17,9 @@ jest.mock('../supabaseClient', () => ({
 }));
 
 import { supabase } from '../supabaseClient';
+
+// Cria um objeto Response mockado utilizando node-mocks-http
+const dummyRes: Response = createResponse() as Response;
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -41,10 +46,10 @@ describe('AuthController', () => {
         error: null,
       });
 
-      const result = await authController.signUp({
-        email: 'test@example.com',
-        password: 'password123',
-      });
+      const result = await authController.signUp(
+        { email: 'test@example.com', password: 'password123' },
+        dummyRes,
+      );
 
       expect(result.user.id).toBe('user123');
       expect(result.session?.access_token).toBe('token123');
@@ -57,10 +62,10 @@ describe('AuthController', () => {
       });
 
       await expect(
-        authController.signUp({
-          email: 'test@example.com',
-          password: 'password123',
-        }),
+        authController.signUp(
+          { email: 'test@example.com', password: 'password123' },
+          dummyRes,
+        ),
       ).rejects.toThrow(HttpException);
     });
 
@@ -71,10 +76,10 @@ describe('AuthController', () => {
       });
 
       await expect(
-        authController.signUp({
-          email: 'test@example.com',
-          password: 'password123',
-        }),
+        authController.signUp(
+          { email: 'test@example.com', password: 'password123' },
+          dummyRes,
+        ),
       ).rejects.toThrowError('No user returned from Supabase');
     });
   });
@@ -89,10 +94,10 @@ describe('AuthController', () => {
         error: null,
       });
 
-      const result = await authController.signIn({
-        email: 'test@example.com',
-        password: 'password123',
-      });
+      const result = await authController.signIn(
+        { email: 'test@example.com', password: 'password123' },
+        dummyRes,
+      );
 
       expect(result.user.id).toBe('user123');
       expect(result.session.access_token).toBe('token123');
@@ -105,10 +110,10 @@ describe('AuthController', () => {
       });
 
       await expect(
-        authController.signIn({
-          email: 'test@example.com',
-          password: 'wrongpassword',
-        }),
+        authController.signIn(
+          { email: 'test@example.com', password: 'wrongpassword' },
+          dummyRes,
+        ),
       ).rejects.toThrow(HttpException);
     });
 
@@ -119,7 +124,10 @@ describe('AuthController', () => {
       });
 
       await expect(
-        authController.signIn({ email: 'test@example.com', password: 'test' }),
+        authController.signIn(
+          { email: 'test@example.com', password: 'test' },
+          dummyRes,
+        ),
       ).rejects.toThrowError('No user returned from Supabase');
     });
 
@@ -130,10 +138,14 @@ describe('AuthController', () => {
       });
 
       await expect(
-        authController.signIn({ email: 'test@example.com', password: 'test' }),
+        authController.signIn(
+          { email: 'test@example.com', password: 'test' },
+          dummyRes,
+        ),
       ).rejects.toThrowError('Unknown error occurred');
     });
   });
+
   describe('signOut', () => {
     it('should sign out a user successfully', async () => {
       (supabase.auth.signOut as jest.Mock).mockResolvedValue({ error: null });

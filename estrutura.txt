@@ -3,6 +3,72 @@
 ├── coverage
 │   ├── clover.xml
 │   ├── coverage-final.json
+│   ├── e2e
+│   │   ├── lcov-report
+│   │   │   ├── base.css
+│   │   │   ├── block-navigation.js
+│   │   │   ├── favicon.png
+│   │   │   ├── index.html
+│   │   │   ├── prettify.css
+│   │   │   ├── prettify.js
+│   │   │   ├── sort-arrow-sprite.png
+│   │   │   ├── sorter.js
+│   │   │   └── src
+│   │   │       ├── app.controller.ts.html
+│   │   │       ├── app.module.ts.html
+│   │   │       ├── app.service.ts.html
+│   │   │       ├── auth
+│   │   │       │   ├── auth.controller.ts.html
+│   │   │       │   ├── auth.module.ts.html
+│   │   │       │   ├── dto
+│   │   │       │   │   ├── index.html
+│   │   │       │   │   ├── signin.dto.ts.html
+│   │   │       │   │   └── signup.dto.ts.html
+│   │   │       │   ├── index.html
+│   │   │       │   ├── public.decorator.ts.html
+│   │   │       │   └── supabase-auth.guard.ts.html
+│   │   │       ├── database
+│   │   │       │   ├── database.controller.ts.html
+│   │   │       │   ├── database.module.ts.html
+│   │   │       │   └── index.html
+│   │   │       ├── decks
+│   │   │       │   ├── decks.controller.ts.html
+│   │   │       │   ├── decks.module.ts.html
+│   │   │       │   ├── decks.service.ts.html
+│   │   │       │   ├── dto
+│   │   │       │   │   ├── create-deck.dto.ts.html
+│   │   │       │   │   ├── index.html
+│   │   │       │   │   └── update-deck.dto.ts.html
+│   │   │       │   └── index.html
+│   │   │       ├── enums
+│   │   │       │   ├── index.html
+│   │   │       │   └── match-result.enum.ts.html
+│   │   │       ├── index.html
+│   │   │       ├── matches
+│   │   │       │   ├── dto
+│   │   │       │   │   ├── create-match.dto.ts.html
+│   │   │       │   │   ├── index.html
+│   │   │       │   │   └── update-match.dto.ts.html
+│   │   │       │   ├── index.html
+│   │   │       │   ├── matches.controller.ts.html
+│   │   │       │   ├── matches.module.ts.html
+│   │   │       │   └── matches.service.ts.html
+│   │   │       ├── players
+│   │   │       │   ├── dto
+│   │   │       │   │   ├── create-player.dto.ts.html
+│   │   │       │   │   ├── index.html
+│   │   │       │   │   └── update-player.dto.ts.html
+│   │   │       │   ├── index.html
+│   │   │       │   ├── players.controller.ts.html
+│   │   │       │   ├── players.module.ts.html
+│   │   │       │   └── players.service.ts.html
+│   │   │       ├── stats
+│   │   │       │   ├── index.html
+│   │   │       │   ├── stats.controller.ts.html
+│   │   │       │   ├── stats.module.ts.html
+│   │   │       │   └── stats.service.ts.html
+│   │   │       └── supabaseClient.ts.html
+│   │   └── lcov.info
 │   ├── lcov-report
 │   │   ├── base.css
 │   │   ├── block-navigation.js
@@ -83,9 +149,11 @@
 │   │       │   └── stats.service.ts.html
 │   │       └── supabaseClient.ts.html
 │   └── lcov.info
+├── coverage-e2e.txt
 ├── coverage-report.txt
 ├── eslint.config.mjs
 ├── estrutura.txt
+├── jest-e2e.config.ts
 ├── mtg-stats-api.zip
 ├── nest-cli.json
 ├── package-lock.json
@@ -113,6 +181,7 @@
 │   │   ├── database.controller.ts
 │   │   └── database.module.ts
 │   ├── decks
+│   │   ├── decks.controller.spec.ts
 │   │   ├── decks.controller.ts
 │   │   ├── decks.module.ts
 │   │   ├── decks.service.spec.ts
@@ -133,6 +202,7 @@
 │   │   │   └── match.entity.ts
 │   │   ├── interface
 │   │   │   └── match.interface.ts
+│   │   ├── matches.controller.spec.ts
 │   │   ├── matches.controller.ts
 │   │   ├── matches.module.ts
 │   │   ├── matches.service.spec.ts
@@ -141,6 +211,9 @@
 │   │   ├── dto
 │   │   │   ├── create-player.dto.ts
 │   │   │   └── update-player.dto.ts
+│   │   ├── entities
+│   │   │   └── player.entity.ts
+│   │   ├── players.controller.spec.ts
 │   │   ├── players.controller.ts
 │   │   ├── players.module.ts
 │   │   ├── players.service.spec.ts
@@ -163,9 +236,12 @@
 ├── test
 │   ├── app.e2e-spec.ts
 │   ├── auth.e2e-spec.ts
+│   ├── decks.e2e-spec.ts
 │   ├── jest-e2e.json
-│   └── matches.e2e-spec.ts
+│   ├── matches.e2e-spec.ts
+│   ├── players.e2e-spec.ts
+│   └── stats.e2e-spec.ts
 ├── tsconfig.build.json
 └── tsconfig.json
 
-37 directories, 132 files
+52 directories, 193 files

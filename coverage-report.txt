@@ -5,15 +5,15 @@
 --------------------------|---------|----------|---------|---------|-------------------
 File                      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 --------------------------|---------|----------|---------|---------|-------------------
-All files                 |    77.5 |    83.47 |   93.42 |   78.07 |                   
+All files                 |   77.46 |     82.9 |   93.42 |   78.03 |                   
  src                      |   46.51 |       40 |      60 |   43.24 |                   
   app.controller.ts       |     100 |      100 |     100 |     100 |                   
   app.module.ts           |       0 |      100 |     100 |       0 | 2-24              
   app.service.ts          |     100 |      100 |     100 |     100 |                   
   main.ts                 |       0 |        0 |       0 |       0 | 1-24              
   supabaseClient.ts       |   85.71 |    66.66 |     100 |   85.71 | 10                
- src/auth                 |   82.89 |     92.3 |   85.71 |   83.82 |                   
-  auth.controller.ts      |     100 |      100 |     100 |     100 |                   
+ src/auth                 |   83.33 |    89.28 |   85.71 |   84.28 |                   
+  auth.controller.ts      |     100 |       95 |     100 |     100 | 41                
   auth.module.ts          |       0 |      100 |     100 |       0 | 2-11              
   public.decorator.ts     |     100 |      100 |     100 |     100 |                   
   supabase-auth.client.ts |       0 |      100 |       0 |       0 | 1-20              
@@ -44,7 +44,7 @@ All files                 |    77.5 |    83.47 |   93.42 |   78.07 |
   update-match.dto.ts     |     100 |      100 |     100 |     100 |                   
  src/matches/entities     |       0 |      100 |     100 |       0 |                   
   match.entity.ts         |       0 |      100 |     100 |       0 | 2-4               
- src/players              |   93.18 |    96.77 |     100 |    94.8 |                   
+ src/players              |   92.94 |    96.77 |     100 |   94.59 |                   
   players.controller.ts   |     100 |      100 |     100 |     100 |                   
   players.module.ts       |       0 |      100 |     100 |       0 | 1-10              
   players.service.ts      |     100 |    96.77 |     100 |     100 | 93                

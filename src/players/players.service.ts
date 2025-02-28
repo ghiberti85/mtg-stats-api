@@ -122,52 +122,48 @@ export class PlayersService {
     };
   }
 
-  async updatePlayer(playerId: string, updatePlayerDto: UpdatePlayerDto) {
-    const {
-      data,
-      error,
-    }: { data: UpdatePlayerDto[] | null; error: { message: string } | null } =
-      await supabase
-        .from('players')
-        .update(updatePlayerDto)
-        .eq('id', playerId)
-        .maybeSingle();
+  async updatePlayer(
+    playerId: string,
+    updatePlayerDto: UpdatePlayerDto,
+  ): Promise<CreatePlayerDto> {
+    const { data, error } = (await supabase
+      .from('players')
+      .update(updatePlayerDto)
+      .eq('id', playerId)
+      .select()
+      .maybeSingle()) as {
+      data: CreatePlayerDto | null;
+      error: { message: string } | null;
+    };
 
-    if (error) {
+    if (error || !data) {
       throw new NotFoundException(
-        `Player with id ${playerId} not found or update failed: ${error.message}`,
+        `Player with id ${playerId} not found or update failed: ${
+          error ? error.message : ''
+        }`,
       );
     }
-    if (!data || !Array.isArray(data) || data.length === 0) {
-      throw new NotFoundException(
-        `Player with id ${playerId} not found or update failed.`,
-      );
-    }
-    return data[0];
+    return data;
   }
 
-  async deletePlayer(playerId: string) {
-    const {
-      data,
-      error,
-    }: { data: { id: string }[] | null; error: { message: string } | null } =
-      (await supabase
-        .from('players')
-        .delete()
-        .eq('id', playerId)
-        .maybeSingle()) as {
-        data: { id: string }[] | null;
-        error: { message: string } | null;
-      };
+  async deletePlayer(playerId: string): Promise<{ message: string }> {
+    const { data, error } = (await supabase
+      .from('players')
+      .delete()
+      .eq('id', playerId)
+      .select()
+      .maybeSingle()) as {
+      data: { id: string } | null;
+      error: { message: string } | null;
+    };
 
-    if (error) {
+    console.log('deletePlayer - result:', { data, error });
+
+    if (error || !data) {
       throw new NotFoundException(
-        `Player with id ${playerId} not found or deletion failed: ${error.message}`,
-      );
-    }
-    if (!data || !Array.isArray(data) || data.length === 0) {
-      throw new NotFoundException(
-        `Player with id ${playerId} not found or deletion failed.`,
+        `Player with id ${playerId} not found or deletion failed: ${
+          error ? error.message : ''
+        }`,
       );
     }
     return { message: 'Player deleted successfully' };

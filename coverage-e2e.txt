@@ -1,55 +1,60 @@
--------------------------|---------|----------|---------|---------|--------------------------
-File                     | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s        
--------------------------|---------|----------|---------|---------|--------------------------
-All files                |    57.7 |    15.04 |      25 |   54.65 |                          
- src                     |   96.96 |    66.66 |     100 |   96.29 |                          
-  app.controller.ts      |     100 |      100 |     100 |     100 |                          
-  app.module.ts          |     100 |      100 |     100 |     100 |                          
-  app.service.ts         |     100 |      100 |     100 |     100 |                          
-  supabaseClient.ts      |   85.71 |    66.66 |     100 |   85.71 | 10                       
- src/auth                |   60.56 |    15.38 |      50 |   55.55 |                          
-  auth.controller.ts     |   41.46 |        0 |      25 |   38.46 | 31,34,49-61,71-77,94-118 
-  auth.module.ts         |     100 |      100 |     100 |     100 |                          
-  public.decorator.ts    |     100 |      100 |     100 |     100 |                          
-  supabase-auth.guard.ts |      80 |       50 |     100 |   77.77 | 21,26,33,42              
- src/auth/dto            |     100 |      100 |     100 |     100 |                          
-  signin.dto.ts          |     100 |      100 |     100 |     100 |                          
-  signup.dto.ts          |     100 |      100 |     100 |     100 |                          
- src/database            |      75 |        0 |       0 |   66.66 |                          
-  database.controller.ts |   63.63 |        0 |       0 |   55.55 | 18-26                    
-  database.module.ts     |     100 |      100 |     100 |     100 |                          
- src/decks               |   60.78 |    18.75 |   27.27 |   55.55 |                          
-  decks.controller.ts    |   80.95 |      100 |   33.33 |   78.94 | 45,54,67,77              
-  decks.module.ts        |     100 |      100 |     100 |     100 |                          
-  decks.service.ts       |   33.33 |    18.75 |      20 |   27.27 | 28,37-88                 
- src/decks/dto           |     100 |      100 |     100 |     100 |                          
-  create-deck.dto.ts     |     100 |      100 |     100 |     100 |                          
-  update-deck.dto.ts     |     100 |      100 |     100 |     100 |                          
- src/enums               |     100 |      100 |     100 |     100 |                          
-  match-result.enum.ts   |     100 |      100 |     100 |     100 |                          
- src/matches             |   41.75 |    11.53 |      20 |   37.64 |                          
-  matches.controller.ts  |   70.96 |    16.66 |   33.33 |   68.96 | 53-58,80,93,111,122      
-  matches.module.ts      |     100 |      100 |     100 |     100 |                          
-  matches.service.ts     |   18.51 |       10 |   11.11 |   15.38 | 15,26,31,43-160          
- src/matches/dto         |     100 |      100 |     100 |     100 |                          
-  create-match.dto.ts    |     100 |      100 |     100 |     100 |                          
-  update-match.dto.ts    |     100 |      100 |     100 |     100 |                          
- src/players             |    37.5 |     9.67 |   16.66 |   35.06 |                          
-  players.controller.ts  |   78.26 |      100 |   28.57 |   76.19 | 47,56,68,81,91           
-  players.module.ts      |     100 |      100 |     100 |     100 |                          
-  players.service.ts     |   15.25 |     9.67 |    9.09 |   13.46 | 32,36,47-173             
- src/players/dto         |     100 |      100 |     100 |     100 |                          
-  create-player.dto.ts   |     100 |      100 |     100 |     100 |                          
-  update-player.dto.ts   |     100 |      100 |     100 |     100 |                          
- src/stats               |   41.66 |        0 |   11.76 |   38.09 |                          
-  stats.controller.ts    |   70.58 |      100 |   16.66 |   66.66 | 24,35,49,63,73           
-  stats.module.ts        |     100 |      100 |     100 |     100 |                          
-  stats.service.ts       |   19.56 |        0 |    9.09 |   17.07 | 15-79                    
--------------------------|---------|----------|---------|---------|--------------------------
+jest-haste-map: duplicate manual mock found: supabaseClient
+  The following files share their name; please delete one of them:
+    * <rootDir>/src/__mocks__/supabaseClient.ts
+    * <rootDir>/dist/src/__mocks__/supabaseClient.js
+
+-------------------------|---------|----------|---------|---------|-------------------------------------
+File                     | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                   
+-------------------------|---------|----------|---------|---------|-------------------------------------
+All files                |   76.61 |       40 |      75 |   75.29 |                                     
+ src                     |   96.96 |    66.66 |     100 |   96.29 |                                     
+  app.controller.ts      |     100 |      100 |     100 |     100 |                                     
+  app.module.ts          |     100 |      100 |     100 |     100 |                                     
+  app.service.ts         |     100 |      100 |     100 |     100 |                                     
+  supabaseClient.ts      |   85.71 |    66.66 |     100 |   85.71 | 10                                  
+ src/auth                |   69.86 |    32.14 |   66.66 |   66.15 |                                     
+  auth.controller.ts     |   58.13 |       25 |      50 |   56.09 | 40,46,71,78,93-99,116-140           
+  auth.module.ts         |     100 |      100 |     100 |     100 |                                     
+  public.decorator.ts    |     100 |      100 |     100 |     100 |                                     
+  supabase-auth.guard.ts |      80 |       50 |     100 |   77.77 | 21,26,33,42                         
+ src/auth/dto            |     100 |      100 |     100 |     100 |                                     
+  signin.dto.ts          |     100 |      100 |     100 |     100 |                                     
+  signup.dto.ts          |     100 |      100 |     100 |     100 |                                     
+ src/database            |      75 |        0 |       0 |   66.66 |                                     
+  database.controller.ts |   63.63 |        0 |       0 |   55.55 | 18-26                               
+  database.module.ts     |     100 |      100 |     100 |     100 |                                     
+ src/decks               |   92.15 |     62.5 |     100 |   91.11 |                                     
+  decks.controller.ts    |     100 |      100 |     100 |     100 |                                     
+  decks.module.ts        |     100 |      100 |     100 |     100 |                                     
+  decks.service.ts       |   83.33 |     62.5 |     100 |   81.81 | 28,54,72,88                         
+ src/decks/dto           |     100 |      100 |     100 |     100 |                                     
+  create-deck.dto.ts     |     100 |      100 |     100 |     100 |                                     
+  update-deck.dto.ts     |     100 |      100 |     100 |     100 |                                     
+ src/enums               |     100 |      100 |     100 |     100 |                                     
+  match-result.enum.ts   |     100 |      100 |     100 |     100 |                                     
+ src/matches             |   51.64 |    11.53 |      40 |   48.23 |                                     
+  matches.controller.ts  |   70.96 |    16.66 |   33.33 |   68.96 | 53-58,80,93,111,122                 
+  matches.module.ts      |     100 |      100 |     100 |     100 |                                     
+  matches.service.ts     |   35.18 |       10 |   44.44 |   32.69 | 15,26,31,43-105,115,129,146,154-160 
+ src/matches/dto         |     100 |      100 |     100 |     100 |                                     
+  create-match.dto.ts    |     100 |      100 |     100 |     100 |                                     
+  update-match.dto.ts    |     100 |      100 |     100 |     100 |                                     
+ src/players             |    64.7 |    48.38 |   72.22 |   66.21 |                                     
+  players.controller.ts  |     100 |      100 |     100 |     100 |                                     
+  players.module.ts      |     100 |      100 |     100 |     100 |                                     
+  players.service.ts     |   46.42 |    48.38 |   54.54 |   48.97 | 32,36,63,79-114,140,163             
+ src/players/dto         |     100 |      100 |     100 |     100 |                                     
+  create-player.dto.ts   |     100 |      100 |     100 |     100 |                                     
+  update-player.dto.ts   |     100 |      100 |     100 |     100 |                                     
+ src/stats               |   90.27 |     62.5 |   94.11 |   90.47 |                                     
+  stats.controller.ts    |     100 |      100 |     100 |     100 |                                     
+  stats.module.ts        |     100 |      100 |     100 |     100 |                                     
+  stats.service.ts       |   84.78 |     62.5 |    90.9 |   85.36 | 52-53,61-66                         
+-------------------------|---------|----------|---------|---------|-------------------------------------
 
 =============================== Coverage summary ===============================
-Statements   : 57.7% ( 277/480 )
-Branches     : 15.04% ( 17/113 )
-Functions    : 25% ( 18/72 )
-Lines        : 54.65% ( 235/430 )
+Statements   : 76.61% ( 367/479 )
+Branches     : 40% ( 46/115 )
+Functions    : 75% ( 54/72 )
+Lines        : 75.29% ( 323/429 )
 ================================================================================
