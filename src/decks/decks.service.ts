@@ -7,7 +7,7 @@ import { supabase } from '../supabaseClient';
 import { CreateDeckDto } from './dto/create-deck.dto';
 import { UpdateDeckDto } from './dto/update-deck.dto';
 
-interface Deck {
+export interface Deck {
   id: string;
   name: string;
   player_id: string;

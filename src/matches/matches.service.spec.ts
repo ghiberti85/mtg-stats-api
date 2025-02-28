@@ -3,139 +3,513 @@ import { MatchesService } from './matches.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { MatchResult } from '../enums/match-result.enum';
 import { supabase } from '../supabaseClient';
-import { Match } from '../matches/entities/match.entity'; // Adjust the path as necessary
+import { Match } from './entities/match.entity';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
+/** Constantes de teste */
 const testPlayerId = '550e8400-e29b-41d4-a716-446655440000';
 const testOpponentId = '550e8400-e29b-41d4-a716-446655440001';
 const testDeckId = '550e8400-e29b-41d4-a716-446655440002';
 const testOpponentDeckId = '550e8400-e29b-41d4-a716-446655440003';
 
-let matchId: string;
+const validCreateMatchDto: CreateMatchDto = {
+  player_id: testPlayerId,
+  opponent_id: testOpponentId,
+  deck_id: testDeckId,
+  opponent_deck_id: testOpponentDeckId,
+  format: 'standard',
+  duration: 30,
+  result: MatchResult.WIN,
+};
 
-beforeAll(async () => {
-  console.log('🔹 Criando registros de teste no Supabase...');
-
-  // Criar jogadores
-  const { error: playerError } = await supabase.from('players').insert([
-    {
-      id: '550e8400-e29b-41d4-a716-446655440000',
-      name: 'Jogador Teste',
-      email: 'jogador.teste@example.com', // ✅ Adicionando email, se obrigatório
-      created_at: new Date().toISOString(), // ✅ Se a tabela exige
-    },
-  ]);
-
-  if (playerError) {
-    console.error('🚨 Erro ao criar jogador de teste:', playerError);
-    throw new Error('Falha ao inserir jogador no Supabase.');
-  }
-
-  if (playerError) {
-    console.error('🚨 Erro ao criar jogadores:', playerError);
-    throw new Error('Falha ao inserir jogadores no Supabase.');
-  }
-
-  // Criar decks
-  const { error: deckError } = await supabase.from('decks').insert([
-    {
-      id: '550e8400-e29b-41d4-a716-446655440002',
-      player_id: '550e8400-e29b-41d4-a716-446655440000', // ✅ Adicionando um player_id válido
-      name: 'Deck Principal',
-      format: 'standard',
-      created_at: new Date().toISOString(), // Se necessário
-    },
-  ]);
-
-  if (deckError) {
-    console.error('🚨 Erro ao criar decks:', deckError);
-    throw new Error('Falha ao inserir decks no Supabase.');
-  }
-
-  // Validar inserção
-  const { data: players } = await supabase.from('players').select('id');
-  const { data: decks } = await supabase.from('decks').select('id');
-
-  console.log('✅ Jogadores criados:', players);
-  console.log('✅ Decks criados:', decks);
+/**
+ * Helpers para simular as cadeias de métodos do Supabase.
+ */
+const createMockChainInsert = (result: { data: any; error: any }) => ({
+  insert: jest.fn(() => ({
+    select: jest.fn(() => ({
+      maybeSingle: jest.fn(() => Promise.resolve(result)),
+    })),
+  })),
 });
 
-afterAll(async () => {
-  console.log('🗑️ Removendo registros de teste do Supabase...');
+const createMockChainSelectEqMaybeSingle = (result: {
+  data: any;
+  error: any;
+}) => ({
+  select: jest.fn(() => ({
+    eq: jest.fn(() => ({
+      maybeSingle: jest.fn(() => Promise.resolve(result)),
+    })),
+  })),
+});
 
-  await supabase.from('matches').delete().eq('player_id', testPlayerId);
-  await supabase.from('players').delete().eq('id', testPlayerId);
-  await supabase.from('players').delete().eq('id', testOpponentId);
-  await supabase.from('decks').delete().eq('id', testDeckId);
-  await supabase.from('decks').delete().eq('id', testOpponentDeckId);
+const createMockChainSelectWithEq = (result: { data: any; error: any }) => ({
+  select: jest.fn(() => ({
+    eq: jest.fn(() => Promise.resolve(result)),
+  })),
+});
+
+const createMockChainSelect = (result: { data: any; error: any }) => ({
+  select: jest.fn(() => Promise.resolve(result)),
+});
+
+const createMockChainUpdate = (result: { data: any; error: any }) => ({
+  update: jest.fn(() => ({
+    select: jest.fn(() => ({
+      maybeSingle: jest.fn(() => Promise.resolve(result)),
+    })),
+  })),
+});
+
+const createMockChainDelete = (result: { data: any; error: any }) => ({
+  delete: jest.fn(() => ({
+    eq: jest.fn(() => Promise.resolve(result)),
+  })),
+});
+
+const createMockChainSelectOr = (result: { data: any; error: any }) => ({
+  select: jest.fn(() => ({
+    or: jest.fn(() => Promise.resolve(result)),
+  })),
 });
 
 describe('MatchesService', () => {
   let service: MatchesService;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const originalFrom: typeof supabase.from = supabase.from.bind(supabase);
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [MatchesService],
     }).compile();
-
     service = module.get<MatchesService>(MatchesService);
   });
 
-  it('deve estar definido', () => {
-    expect(service).toBeDefined();
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
-  it('deve criar uma partida com sucesso', async () => {
-    const createMatchDto: CreateMatchDto = {
-      player_id: '550e8400-e29b-41d4-a716-446655440000',
-      opponent_id: '550e8400-e29b-41d4-a716-446655440001',
-      deck_id: '550e8400-e29b-41d4-a716-446655440002',
-      opponent_deck_id: '550e8400-e29b-41d4-a716-446655440003',
-      format: 'standard',
-      duration: 30,
-      result: MatchResult.WIN,
-    };
+  // -------------------- Testes de createMatch --------------------
+  describe('createMatch', () => {
+    it('deve criar uma partida com sucesso', async () => {
+      const mockMatch: Partial<Match> = {
+        id: 'match-success-id',
+        ...validCreateMatchDto,
+      };
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainInsert({
+            data: mockMatch,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      const result = await service.createMatch(validCreateMatchDto);
+      expect(result).toBeDefined();
+      expect(result.id).toEqual('match-success-id');
+    });
 
-    const match = await service.createMatch(createMatchDto);
-    expect(match).toBeDefined();
-    expect((match as Match).id).toBeDefined(); // ✅ Garantimos que `id` existe na resposta
-    matchId = (match as Match).id; // ✅ Armazena corretamente o ID
+    it('deve lançar erro se campos obrigatórios estiverem faltando', async () => {
+      await expect(service.createMatch({} as CreateMatchDto)).rejects.toThrow(
+        new InternalServerErrorException(
+          'Error creating match: player_id e deck_id são obrigatórios.',
+        ),
+      );
+    });
+
+    it('deve lançar erro se o Supabase retornar erro', async () => {
+      const errorMock = { message: 'Constraint error', code: '23503' };
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainInsert({
+            data: null,
+            error: errorMock,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(service.createMatch(validCreateMatchDto)).rejects.toThrow(
+        new InternalServerErrorException(
+          'Error creating match: Constraint error',
+        ),
+      );
+    });
+
+    it('deve lançar erro se o Supabase retornar dados indefinidos', async () => {
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainInsert({
+            data: null,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(service.createMatch(validCreateMatchDto)).rejects.toThrow(
+        new InternalServerErrorException(
+          'Error creating match: Dados retornados estão indefinidos.',
+        ),
+      );
+    });
   });
 
-  it('deve lançar erro ao criar uma partida inválida', async () => {
-    await expect(service.createMatch({} as any)).rejects.toThrow(
-      new Error('Error creating match: player_id e deck_id são obrigatórios.'),
-    );
+  // -------------------- Testes de getMatchById --------------------
+  describe('getMatchById', () => {
+    it('deve retornar uma partida pelo ID', async () => {
+      const mockMatch: Partial<Match> = {
+        id: 'match-by-id',
+        player_id: testPlayerId,
+        opponent_id: testOpponentId,
+        deck_id: testDeckId,
+        opponent_deck_id: testOpponentDeckId,
+        format: 'standard',
+        duration: 30,
+        result: MatchResult.WIN,
+      };
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainSelectEqMaybeSingle({
+            data: mockMatch,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      const result = await service.getMatchById('match-by-id');
+      expect(result).toBeDefined();
+      expect(result.id).toEqual('match-by-id');
+    });
+
+    it('deve lançar NotFoundException se a partida não for encontrada', async () => {
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainSelectEqMaybeSingle({
+            data: null,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(service.getMatchById('non-existent-uuid')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 
-  it('deve retornar uma partida por ID', async () => {
-    const match = await service.getMatchById(matchId);
-    expect(match).toBeDefined();
-    expect((match as Match).id).toBe(matchId);
+  // -------------------- Testes de getMatches --------------------
+  describe('getMatches', () => {
+    it('deve lançar erro se o Supabase retornar um erro', async () => {
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return {
+            select: jest.fn(() =>
+              Promise.resolve({
+                data: null,
+                error: { message: 'Query error' },
+              }),
+            ),
+          } as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(service.getMatches()).rejects.toThrow(
+        new InternalServerErrorException(
+          'Error searching for matches: Query error',
+        ),
+      );
+    });
+
+    it('deve retornar partidas filtradas por playerId', async () => {
+      const mockMatches = [
+        {
+          id: 'match-filtered-id',
+          player_id: testPlayerId,
+          opponent_id: testOpponentId,
+          deck_id: testDeckId,
+          opponent_deck_id: testOpponentDeckId,
+          format: 'standard',
+          duration: 30,
+          result: 'win',
+        },
+      ];
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainSelectWithEq({
+            data: mockMatches,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      const result = await service.getMatches(testPlayerId);
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+      result.forEach((match) => expect(match.player_id).toEqual(testPlayerId));
+    });
   });
 
-  it('deve lançar erro ao buscar uma partida inexistente', async () => {
-    await expect(service.getMatchById('non-existent-uuid')).rejects.toThrow();
+  // -------------------- Testes de updateMatch --------------------
+  describe('updateMatch', () => {
+    it('deve atualizar uma partida com sucesso', async () => {
+      const updatedMatch: Partial<Match> = {
+        id: 'match-update-id',
+        result: MatchResult.LOSS,
+        player_id: testPlayerId,
+        opponent_id: testOpponentId,
+        deck_id: testDeckId,
+        opponent_deck_id: testOpponentDeckId,
+        format: 'standard',
+        duration: 30,
+      };
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainUpdate({
+            data: updatedMatch,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      const result = await service.updateMatch('match-update-id', {
+        result: MatchResult.LOSS,
+      });
+      expect(result).toBeDefined();
+      expect(result.result).toEqual(MatchResult.LOSS);
+    });
+
+    it('deve lançar NotFoundException se a partida não existir', async () => {
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainUpdate({
+            data: null,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(
+        service.updateMatch('non-existent-uuid', { result: MatchResult.WIN }),
+      ).rejects.toThrow(NotFoundException);
+    });
   });
 
-  it('deve atualizar uma partida com sucesso', async () => {
-    const updateMatchDto = { result: MatchResult.LOSS };
-    const updatedMatch = await service.updateMatch(matchId, updateMatchDto);
-    expect(updatedMatch).toBeDefined();
-    expect(updatedMatch.result).toBe(MatchResult.LOSS);
+  // -------------------- Testes de deleteMatch --------------------
+  describe('deleteMatch', () => {
+    it('deve deletar uma partida com sucesso', async () => {
+      const mockData = [{ id: 'match-delete-id' }];
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainDelete({
+            data: mockData,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      const result = await service.deleteMatch('match-delete-id');
+      expect(result).toEqual({ message: 'Match removed successfully.' });
+    });
+
+    it('deve lançar NotFoundException se a partida a ser deletada não existir', async () => {
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainDelete({
+            data: [],
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(service.deleteMatch('non-existent-uuid')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 
-  it('deve lançar erro ao atualizar uma partida inexistente', async () => {
-    await expect(
-      service.updateMatch('non-existent-uuid', { result: MatchResult.WIN }),
-    ).rejects.toThrow();
+  // -------------------- Testes de getMatchesByPlayer --------------------
+  describe('getMatchesByPlayer', () => {
+    it('deve retornar partidas de um jogador', async () => {
+      const mockMatches = [
+        {
+          id: 'match-player-id',
+          player_id: testPlayerId,
+          opponent_id: testOpponentId,
+          deck_id: testDeckId,
+          opponent_deck_id: testOpponentDeckId,
+          format: 'standard',
+          duration: 30,
+          result: 'win',
+        },
+      ];
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainSelectOr({
+            data: mockMatches,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      const result = await service.getMatchesByPlayer(testPlayerId);
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+    });
+
+    it('deve lançar erro se o Supabase retornar erro em getMatchesByPlayer', async () => {
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainSelectOr({
+            data: null,
+            error: { message: 'Query error for player' },
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(service.getMatchesByPlayer(testPlayerId)).rejects.toThrow(
+        new InternalServerErrorException(
+          `Error retrieving matches for player ${testPlayerId}: Query error for player`,
+        ),
+      );
+    });
   });
 
-  it('deve deletar uma partida com sucesso', async () => {
-    const response = await service.deleteMatch(matchId);
-    expect(response).toEqual({ message: 'Match removed successfully.' });
+  // -------------------- Testes de getMatchesByDeck --------------------
+  describe('getMatchesByDeck', () => {
+    it('deve retornar partidas para um deck', async () => {
+      const mockMatches = [
+        {
+          id: 'match-deck-id',
+          deck_id: testDeckId,
+          player_id: testPlayerId,
+          opponent_id: testOpponentId,
+          opponent_deck_id: testOpponentDeckId,
+          format: 'standard',
+          duration: 30,
+          result: 'win',
+        },
+      ];
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainSelectOr({
+            data: mockMatches,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      const result = await service.getMatchesByDeck(testDeckId);
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+    });
+
+    it('deve lançar erro se o Supabase retornar erro em getMatchesByDeck', async () => {
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainSelectOr({
+            data: null,
+            error: { message: 'Query error for deck' },
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(service.getMatchesByDeck(testDeckId)).rejects.toThrow(
+        new InternalServerErrorException(
+          `Error retrieving matches for deck ${testDeckId}: Query error for deck`,
+        ),
+      );
+    });
   });
 
-  it('deve lançar erro ao deletar uma partida inexistente', async () => {
-    await expect(service.deleteMatch('non-existent-uuid')).rejects.toThrow();
+  // -------------------- Testes de getMatchupHistory --------------------
+  describe('getMatchupHistory', () => {
+    it('deve retornar histórico de confrontos entre dois jogadores', async () => {
+      const mockMatches = [
+        {
+          id: 'matchup-history-id',
+          player_id: testPlayerId,
+          opponent_id: testOpponentId,
+          deck_id: testDeckId,
+          opponent_deck_id: testOpponentDeckId,
+          format: 'standard',
+          duration: 30,
+          result: 'win',
+        },
+      ];
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainSelectOr({
+            data: mockMatches,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      const result = await service.getMatchupHistory(
+        testPlayerId,
+        testOpponentId,
+      );
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+    });
+
+    it('deve lançar erro se o Supabase retornar erro em getMatchupHistory', async () => {
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'matches') {
+          return createMockChainSelectOr({
+            data: null,
+            error: { message: 'Query error for matchup' },
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(
+        service.getMatchupHistory(testPlayerId, testOpponentId),
+      ).rejects.toThrow(
+        new InternalServerErrorException(
+          `Error retrieving matchup history between players ${testPlayerId} and ${testOpponentId}: Query error for matchup`,
+        ),
+      );
+    });
+  });
+
+  // -------------------- Testes de getAllPlayers --------------------
+  describe('getAllPlayers', () => {
+    it('deve retornar todos os jogadores', async () => {
+      const mockPlayers = [{ id: testPlayerId, name: 'Jogador Teste' }];
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'players') {
+          return createMockChainSelect({
+            data: mockPlayers,
+            error: null,
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      const result = await service.getAllPlayers();
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+    });
+
+    it('deve lançar erro se o Supabase retornar erro em getAllPlayers', async () => {
+      jest.spyOn(supabase, 'from').mockImplementation((relation: string) => {
+        if (relation === 'players') {
+          return createMockChainSelect({
+            data: null,
+            error: { message: 'Players query error' },
+          }) as unknown as ReturnType<typeof supabase.from>;
+        }
+        return originalFrom(relation);
+      });
+      await expect(service.getAllPlayers()).rejects.toThrow(
+        new InternalServerErrorException(
+          'Error retrieving players: Players query error',
+        ),
+      );
+    });
   });
 });

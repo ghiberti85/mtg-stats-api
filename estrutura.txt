@@ -53,6 +53,9 @@
 │   │       │   │   ├── create-match.dto.ts.html
 │   │       │   │   ├── index.html
 │   │       │   │   └── update-match.dto.ts.html
+│   │       │   ├── entities
+│   │       │   │   ├── index.html
+│   │       │   │   └── match.entity.ts.html
 │   │       │   ├── index.html
 │   │       │   ├── matches.controller.ts.html
 │   │       │   ├── matches.module.ts.html
@@ -165,4 +168,4 @@
 ├── tsconfig.build.json
 └── tsconfig.json
 
-36 directories, 130 files
+37 directories, 132 files

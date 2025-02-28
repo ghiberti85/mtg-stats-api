@@ -1,10 +1,6 @@
-export class Match {
+// src/matches/entities/match.entity.ts
+import { CreateMatchDto } from '../dto/create-match.dto';
+
+export class Match extends CreateMatchDto {
   id!: string;
-  player_id!: string;
-  opponent_id?: string;
-  deck_id!: string;
-  opponent_deck_id?: string;
-  format!: string;
-  duration!: number;
-  result!: string;
 }

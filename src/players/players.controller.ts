@@ -33,7 +33,9 @@ export class PlayersController {
   @Post()
   @ApiOperation({ summary: 'Create a new player' })
   @ApiResponse({ status: 201, description: 'Player successfully created' })
-  async createPlayer(@Body() createPlayerDto: CreatePlayerDto): Promise<any> {
+  async createPlayer(
+    @Body() createPlayerDto: CreatePlayerDto,
+  ): Promise<CreatePlayerDto> {
     return await this.playersService.createPlayer(createPlayerDto);
   }
 

@@ -52,12 +52,22 @@ describe('StatsController', () => {
       player2: 'player2',
       matches: [
         {
-          player_id: 'uuid-player1',
-          deck_id: 'uuid-deck1',
-          format: 'modern',
-          result: MatchResult.WIN, // 🔹 Corrigido para minúsculas, conforme `MatchResult`
+          id: 'match1', // adicione o id
+          player_id: 'player1',
+          deck_id: 'deck1',
+          format: 'Modern',
+          result: MatchResult.WIN,
           duration: 30,
           match_date: '2024-02-22T12:00:00Z',
+        },
+        {
+          id: 'match2', // adicione o id
+          player_id: 'player2',
+          deck_id: 'deck2',
+          format: 'Modern',
+          result: MatchResult.LOSS,
+          duration: 25,
+          match_date: '2024-02-23T14:00:00Z',
         },
       ],
     };

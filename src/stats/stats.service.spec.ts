@@ -3,12 +3,10 @@ import { StatsService } from './stats.service';
 import { MatchesService } from '../matches/matches.service';
 import { PlayersService } from '../players/players.service';
 import { MatchResult } from '../enums/match-result.enum';
-import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
 
 describe('StatsService', () => {
   let service: StatsService;
   let matchesService: MatchesService;
-  let playersService: PlayersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,8 +24,22 @@ describe('StatsService', () => {
         {
           provide: PlayersService,
           useValue: {
+            // Aqui garantimos que getPlayers retorne jogadores com id e name
+            getPlayers: jest.fn(() =>
+              Promise.resolve([
+                {
+                  id: 'player1',
+                  name: 'Player One',
+                  email: 'playerone@example.com',
+                },
+                {
+                  id: 'player2',
+                  name: 'Player Two',
+                  email: 'playertwo@example.com',
+                },
+              ]),
+            ),
             getAllPlayers: jest.fn(() => Promise.resolve([])),
-            getPlayers: jest.fn(),
           },
         },
       ],
@@ -35,31 +47,30 @@ describe('StatsService', () => {
 
     service = module.get<StatsService>(StatsService);
     matchesService = module.get<MatchesService>(MatchesService);
-    playersService = module.get<PlayersService>(PlayersService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  // ✅ Test: Calculate player win rate
+  // Test: Calculate player win rate
   it('should calculate player win rate', async () => {
     jest.spyOn(matchesService, 'getMatchesByPlayer').mockResolvedValue([
       {
+        id: 'match1',
         player_id: 'player1',
         deck_id: 'deck1',
         format: 'Modern',
         result: MatchResult.WIN,
         duration: 30,
-        match_date: '2024-02-22T12:00:00Z',
       },
       {
+        id: 'match2',
         player_id: 'player1',
         deck_id: 'deck1',
         format: 'Modern',
         result: MatchResult.LOSS,
         duration: 25,
-        match_date: '2024-02-23T15:45:00Z',
       },
     ]);
 
@@ -73,24 +84,24 @@ describe('StatsService', () => {
     });
   });
 
-  // ✅ Test: Calculate deck win rate
+  // Test: Calculate deck win rate
   it('should calculate deck win rate', async () => {
     jest.spyOn(matchesService, 'getMatchesByDeck').mockResolvedValue([
       {
+        id: 'match3',
         player_id: 'player1',
         deck_id: 'deck1',
         format: 'Modern',
         result: MatchResult.WIN,
         duration: 30,
-        match_date: '2024-02-22T12:00:00Z',
       },
       {
+        id: 'match4',
         player_id: 'player2',
         deck_id: 'deck1',
         format: 'Modern',
         result: MatchResult.LOSS,
         duration: 25,
-        match_date: '2024-02-23T14:00:00Z',
       },
     ]);
 
@@ -104,10 +115,11 @@ describe('StatsService', () => {
     });
   });
 
-  // ✅ Test: Get matchup history
+  // Test: Get matchup history
   it('should retrieve matchup history between two players', async () => {
     jest.spyOn(matchesService, 'getMatchupHistory').mockResolvedValue([
       {
+        id: 'match5',
         player_id: 'player1',
         deck_id: 'deck1',
         opponent_id: 'player2',
@@ -116,6 +128,7 @@ describe('StatsService', () => {
         duration: 30,
       },
       {
+        id: 'match6',
         player_id: 'player2',
         deck_id: 'deck2',
         opponent_id: 'player1',
@@ -132,6 +145,7 @@ describe('StatsService', () => {
       player2: 'player2',
       matches: [
         {
+          id: 'match5',
           player_id: 'player1',
           deck_id: 'deck1',
           opponent_id: 'player2',
@@ -140,6 +154,7 @@ describe('StatsService', () => {
           duration: 30,
         },
         {
+          id: 'match6',
           player_id: 'player2',
           deck_id: 'deck2',
           opponent_id: 'player1',
@@ -151,7 +166,7 @@ describe('StatsService', () => {
     });
   });
 
-  // ✅ Test: Compare deck performance
+  // Test: Compare deck performance
   it('should compare two decks correctly', async () => {
     jest
       .spyOn(matchesService, 'getMatchesByDeck')
@@ -160,38 +175,38 @@ describe('StatsService', () => {
           deckId === 'deck1'
             ? [
                 {
+                  id: 'match7',
                   player_id: 'player1',
                   deck_id: 'deck1',
                   format: 'Modern',
                   result: MatchResult.WIN,
                   duration: 30,
-                  match_date: '2024-02-22T12:00:00Z',
                 },
                 {
+                  id: 'match8',
                   player_id: 'player2',
                   deck_id: 'deck1',
                   format: 'Modern',
                   result: MatchResult.LOSS,
                   duration: 25,
-                  match_date: '2024-02-23T14:00:00Z',
                 },
               ]
             : [
                 {
+                  id: 'match9',
                   player_id: 'player3',
                   deck_id: 'deck2',
                   format: 'Legacy',
                   result: MatchResult.WIN,
                   duration: 40,
-                  match_date: '2024-02-25T17:30:00Z',
                 },
                 {
+                  id: 'match10',
                   player_id: 'player4',
                   deck_id: 'deck2',
                   format: 'Legacy',
                   result: MatchResult.LOSS,
                   duration: 35,
-                  match_date: '2024-02-26T20:00:00Z',
                 },
               ],
         ),
@@ -200,25 +215,21 @@ describe('StatsService', () => {
     const comparison = await service.compareDecks('deck1', 'deck2');
 
     expect(comparison).toEqual({
-      deck1: { deckId: 'deck1', total: 2, wins: 1, winRate: 50 }, // 🔹 Ajustado para 2 partidas e 50% win rate
-      deck2: { deckId: 'deck2', total: 2, wins: 1, winRate: 50 }, // 🔹 Ajustado para 2 partidas e 50% win rate
+      deck1: { deckId: 'deck1', total: 2, wins: 1, winRate: 50 },
+      deck2: { deckId: 'deck2', total: 2, wins: 1, winRate: 50 },
     });
   });
 
-  // ✅ Test: Return player leaderboard
+  // Test: Return player leaderboard
   it('should return the player leaderboard correctly', async () => {
-    jest.spyOn(playersService, 'getPlayers').mockResolvedValue([
-      { name: 'Player One', email: 'playerone@example.com' },
-      { name: 'Player Two', email: 'playertwo@example.com' },
-    ] as CreatePlayerDto[]);
-
     jest
       .spyOn(matchesService, 'getMatchesByPlayer')
-      .mockImplementation((playerName) =>
+      .mockImplementation((playerId) =>
         Promise.resolve(
-          playerName === 'Player One'
+          playerId === 'player1'
             ? [
                 {
+                  id: 'm12',
                   player_id: 'player1',
                   result: MatchResult.WIN,
                   deck_id: 'deck1',
@@ -226,6 +237,7 @@ describe('StatsService', () => {
                   duration: 30,
                 },
                 {
+                  id: 'm13',
                   player_id: 'player1',
                   result: MatchResult.WIN,
                   deck_id: 'deck2',
@@ -233,6 +245,7 @@ describe('StatsService', () => {
                   duration: 40,
                 },
                 {
+                  id: 'm14',
                   player_id: 'player1',
                   result: MatchResult.LOSS,
                   deck_id: 'deck1',
@@ -242,6 +255,7 @@ describe('StatsService', () => {
               ]
             : [
                 {
+                  id: 'm15',
                   player_id: 'player2',
                   result: MatchResult.WIN,
                   deck_id: 'deck3',
@@ -249,6 +263,7 @@ describe('StatsService', () => {
                   duration: 35,
                 },
                 {
+                  id: 'm16',
                   player_id: 'player2',
                   result: MatchResult.LOSS,
                   deck_id: 'deck4',

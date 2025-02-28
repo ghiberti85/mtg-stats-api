@@ -21,6 +21,7 @@ import {
 import { CreateDeckDto } from './dto/create-deck.dto';
 import { UpdateDeckDto } from './dto/update-deck.dto';
 import { Public } from '../auth/public.decorator';
+import type { Deck } from '../decks/decks.service';
 
 @ApiTags('Decks')
 @ApiExtraModels(CreateDeckDto, UpdateDeckDto)
@@ -32,8 +33,7 @@ export class DecksController {
   @UseGuards(SupabaseAuthGuard)
   @Post()
   @ApiOperation({ summary: 'Create a new deck' })
-  @ApiResponse({ status: 201, description: 'Deck created successfully' })
-  async createDeck(@Body() createDeckDto: CreateDeckDto) {
+  async createDeck(@Body() createDeckDto: CreateDeckDto): Promise<Deck> {
     return await this.decksService.createDeck(createDeckDto);
   }
 
@@ -41,7 +41,7 @@ export class DecksController {
   @Get()
   @ApiOperation({ summary: 'List all decks' })
   @ApiResponse({ status: 200, description: 'Decklist returned' })
-  async getAllDecks() {
+  async getAllDecks(): Promise<Deck[]> {
     return await this.decksService.getDecks();
   }
 
@@ -50,7 +50,7 @@ export class DecksController {
   @ApiOperation({ summary: 'Search for a deck by ID' })
   @ApiResponse({ status: 200, description: 'Deck found' })
   @ApiResponse({ status: 404, description: 'Deck not found' })
-  async getDeckById(@Param('id') id: string) {
+  async getDeckById(@Param('id') id: string): Promise<Deck> {
     return await this.decksService.getDeckById(id);
   }
 
@@ -63,7 +63,7 @@ export class DecksController {
   async updateDeck(
     @Param('id') id: string,
     @Body() updateDeckDto: UpdateDeckDto,
-  ) {
+  ): Promise<Deck> {
     return await this.decksService.updateDeck(id, updateDeckDto);
   }
 
