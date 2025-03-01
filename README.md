@@ -104,9 +104,12 @@ This interface provides detailed information on all endpoints, request/response 
 
 ## 🔧 Running the tests <a name = "tests"></a>
 
+
 ### Unit Tests
 
-Run unit tests with:
+We are using [Jest](https://jestjs.io/docs/getting-started) for unit tests
+
+- Run unit tests with:
 
 ```
 npm run test
@@ -114,7 +117,7 @@ npm run test
 
 ### End-to-End (E2E) Tests
 
-Run E2E tests with:
+- Run E2E tests with:
 
 ```
 npm run test:e2e
@@ -122,13 +125,13 @@ npm run test:e2e
 
 ### Test Coverage Reports
 
-Unit Test Coverage
+- Unit Test Coverage
 
 ```
 npm run test:cov
 ```
 
-E2E Test Coverage
+- E2E Test Coverage
 
 ```
 npm run test:e2e:cov
@@ -154,7 +157,7 @@ This project is licensed under the [MIT License](https://github.com/nestjs/nest/
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- Developed with 💚 by [@ghiberti85](https://github.com/ghiberti85)
+Developed with 💚 by [@ghiberti85](https://github.com/ghiberti85)
 
 ## 👋 Contact <a name = "contact"></a>
 
