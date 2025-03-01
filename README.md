@@ -1,6 +1,5 @@
 <p align="center">
-  <a href="" rel="noopener">
- <img width=200px height=200px style="border-radius:8px;" src="logo.png" alt="Project logo"></a>
+ <img width=200px height=200px style="border-radius:8px;" src="logo.png" alt="Project logo">
 </p>
 
 <h3 align="center">MTG Stats API</h3>
