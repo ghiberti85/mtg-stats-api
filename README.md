@@ -144,10 +144,10 @@ You can also use platforms like Mau for a streamlined deployment process on AWS.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-- [VueJs](https://vuejs.org/) - Web Framework
+- [Supabase](https://supabase.com/docs) - Databases, Authentication, and Storage
 - [NodeJs](https://nodejs.org/en/) - Server Environment
+- [NestJS](https://nestjs.com) - Server Framework
+- [Jest](https://jestjs.io/) - Testing Framework
 
 ## 📄 License <a name = "license"></a>
 
