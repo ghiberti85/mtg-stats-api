@@ -47,7 +47,7 @@ MTG Stats API is a backend application developed with [NestJS](https://nestjs.co
 - **Deck Management:** Create, retrieve, update, and delete decks, allowing association with specific players.
 - **Statistics:** Generate performance analysis including win rate, matchup history, deck comparisons, and a leaderboard.
 - **External API Integration:** Leverage Supabase for data management and authentication, and Scryfall API for card information.
-- **Robust Testing Environment:** Extensive unit and end-to-end tests ensure the reliability of all endpoints before the frontend development begins.
+- **Robust Testing Environment:** Extensive unit and end-to-end tests ensure the reliability of all endpoints.
 
 ### Technologies Used
 
