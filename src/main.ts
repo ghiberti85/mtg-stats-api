@@ -18,6 +18,12 @@ async function bootstrap() {
   // (Opcional) Configurar um filtro global de exceções
   // app.useGlobalFilters(new AllExceptionsFilter());
 
+  // Habilita o CORS, permitindo requisições vindas do domínio do front-end
+  app.enableCors({
+    origin: 'http://localhost:3001', // ou use "*" para todas as origens (não recomendado para produção)
+    credentials: true,
+  });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap().catch((error) => {
